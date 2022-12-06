@@ -9,6 +9,7 @@ const session = require('cookie-session');
 
 // This is the root file of the routing structure
 const indexRouter = require('./routes/index');
+const UserService = require('./services/UserService');
 
 // This is a simple helper that avoids 404 errors when
 // the browser tried to look for a favicon file
@@ -62,6 +63,29 @@ module.exports = (config) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
+  app.use(async (req, res, next) => {
+    try {
+      if (!req.session.userId) {
+        res.locals.user = null;
+        return next();
+      }
+      const user = await UserService.findById(req.session.userId);
+      if (user && user.verified) {
+        res.locals.user = user;
+      } else {
+        req.session.messages.push({
+          text: 'Please verify your email!',
+          type: 'warning',
+        });
+      }
+      req.sessionOptions.maxAge = req.session.maxAge;
+      return next();
+    } catch (err) {
+      res.locals.user = null;
+      return next(err);
+    }
+  });
+
   /**
    * @todo: Implement a middleware that restores the user from the database if `userId` is present on the session
    */
@@ -73,10 +97,8 @@ module.exports = (config) => {
   // Look into `/server/views/partials/messages.ejs`to see how this works.
   app.use(async (req, res, next) => {
     // Set up flash messaging
-    if (!req.session.messages) {
-      req.session.messages = [];
-    }
-    res.locals.messages = req.session.messages;
+    if (req.session.messages) res.locals.messages = req.session.messages;
+    req.session.messages = [];
     return next();
   });
 

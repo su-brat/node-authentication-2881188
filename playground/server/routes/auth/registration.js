@@ -69,11 +69,12 @@ module.exports = () => {
         /**
          * @todo: Provide a method in UserService that will create a new user
          */
-        await UserService.createUser(
+        const user = await UserService.createUser(
           req.body.username,
           req.body.email,
           req.body.password
         );
+        if (user) req.session.userId = user._id;
         req.session.messages.push({
           text: 'Your account was created!',
           type: 'success',

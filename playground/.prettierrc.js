@@ -2,8 +2,8 @@
 // please follow https://betterprogramming.pub/integrating-prettier-and-eslint-with-vs-code-1d2f6fb53bc9
 
 module.exports = {
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "useTabs": false
-}
+  semi: true,
+  singleQuote: true,
+  tabWidth: 2,
+  useTabs: false,
+};
