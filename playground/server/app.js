@@ -74,7 +74,7 @@ module.exports = (config) => {
         res.locals.user = user;
       } else {
         req.session.messages.push({
-          text: 'Please verify your email!',
+          text: 'Please verify your email to login!',
           type: 'warning',
         });
       }
@@ -97,7 +97,7 @@ module.exports = (config) => {
   // Look into `/server/views/partials/messages.ejs`to see how this works.
   app.use(async (req, res, next) => {
     // Set up flash messaging
-    if (req.session.messages) res.locals.messages = req.session.messages;
+    res.locals.messages = req.session.messages || [];
     req.session.messages = [];
     return next();
   });

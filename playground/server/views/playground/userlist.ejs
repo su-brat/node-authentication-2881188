@@ -31,7 +31,7 @@
                 </td>
                 <td>
 
-                  <% if(user.verificationToken) {%>
+                  <% if(!user.verified && user.verificationToken) {%>
                     <a href="/auth/verify/<%=user._id%>/<%=user.verificationToken%>" class="btn btn-success"
                       title="Verify user"><i class="fa fa-check" aria-hidden="true"></i></a>
                     <%}%>
