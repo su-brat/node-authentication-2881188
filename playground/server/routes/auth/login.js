@@ -28,7 +28,7 @@ module.exports = () => {
           text: 'You are logged in!',
           type: 'success',
         });
-        return res.redirect('/');
+        return res.redirect(req.session.returnTo || '/');
       } catch (err) {
         return next(err);
       }
