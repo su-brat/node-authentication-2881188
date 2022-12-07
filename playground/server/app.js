@@ -70,7 +70,14 @@ module.exports = (config) => {
   app.use(async (req, res, next) => {
     try {
       req.sessionOptions.maxAge = req.session.maxAge;
-      res.locals.user = req.user;
+      res.locals.user = null;
+      if (req.user && !req.user.verified) {
+        req.session.messages.push({
+          text: 'Verify your email!',
+          type: 'warning',
+        });
+        req.logout();
+      } else res.locals.user = req.user;
       return next();
     } catch (err) {
       res.locals.user = null;
