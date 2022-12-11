@@ -19,9 +19,8 @@ module.exports = (config) => {
           /**
            * @todo: Try to find the user in the database and try to validate the password
            */
-
-          const user = await UserService.findByUsername(req.body.username);
-          if (user && (await user.comparePassword(req.body.password))) {
+          const user = await UserService.findByUsername(username);
+          if (user && (await user.comparePassword(password))) {
             return done(null, user);
           }
           req.session.messages.push({
