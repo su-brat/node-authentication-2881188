@@ -1,8 +1,12 @@
 /* eslint-disable no-unused-vars */
 const passport = require('passport');
+const passportJwt = require('passport-jwt');
 const LocalStrategy = require('passport-local').Strategy;
 
 const UserService = require('../../services/UserService');
+
+const JWTStrategy = passportJwt.Strategy;
+const ExtractJwt = passportJwt.ExtractJwt;
 
 /**
  * This module sets up and configures passport
@@ -33,6 +37,22 @@ module.exports = (config) => {
            * @todo: Log the user in by saving the userid to the session and redirect to the index page
            * @todo: Don't forget about 'Remember me'!
            */
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+  passport.use(
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: config.JWTSECRET,
+      },
+      async (jwtPayload, done) => {
+        try {
+          const user = await UserService.findById(jwtPayload.userId);
+          return done(null, user);
         } catch (err) {
           return done(err);
         }
